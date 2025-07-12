@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medic Chatbot - Home</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617; /* Darker background */
+            color: #f8fafc; /* Light text */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            text-align: center;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .hero-section {
+            padding: 2rem;
+            background-color: #0f172a; /* Dark background for hero */
+            border-radius: 1rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+            max-width: 700px;
+            width: 90%;
+            animation: fadeInScale 1s ease-out;
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #6366f1; /* Primary color */
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: #94a3b8; /* Secondary text color */
+            margin-bottom: 2rem;
+        }
+
+        .start-chat-btn {
+            background-color: #6366f1; /* Primary color */
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .start-chat-btn:hover {
+            background-color: #4f46e5; /* Darker primary */
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.6);
+        }
+
+        .start-chat-btn i {
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .footer-text {
+            font-size: 0.9rem;
+            color: #475569;
+            animation: fadeIn 2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .logo-icon {
+    width: 60px;
+    height: 60px;
+    background-color: #6366f1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    color: white;
+    font-size: 28px;
+    box-shadow: 5px 10px 20px rgba(79, 70, 229, 0.3);
+}
+    </style>
+</head>
+<body>
+    <div class="hero-section">
+        <h1 class="hero-title">
+             <div class="logo-icon">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+            Medic Chatbot
+        </h1>
+        <p class="hero-subtitle">Your personal AI assistant for health information and wellness advice.</p>
+        <a href="/chat" class="start-chat-btn">
+            Start Chat <i class="fas fa-comment-dots"></i>
+        </a>
+    </div>
+    <p class="footer-text">Always consult a healthcare professional for medical advice.</p>
+</body>
+</html>
