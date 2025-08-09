@@ -3,136 +3,656 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medic Chatbot - Home</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Medic AI - Advanced Health Companion</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #020617; /* Darker background */
-            color: #f8fafc; /* Light text */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+        :root {
+            --primary: #0a2463;
+            --secondary: #3e92cc;
+            --accent: #7ef9ff;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+        }
+        
+        * {
             margin: 0;
-            overflow: hidden;
-            text-align: center;
-            flex-direction: column;
-            gap: 2rem;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
-
-        .hero-section {
-            padding: 2rem;
-            background-color: #0f172a; /* Dark background for hero */
-            border-radius: 1rem;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
-            max-width: 700px;
-            width: 90%;
-            animation: fadeInScale 1s ease-out;
-        }
-
-        @keyframes fadeInScale {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .hero-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #6366f1; /* Primary color */
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-        }
-
-        .hero-subtitle {
-            font-size: 1.25rem;
-            color: #94a3b8; /* Secondary text color */
-            margin-bottom: 2rem;
-        }
-
-        .start-chat-btn {
-            background-color: #6366f1; /* Primary color */
+        
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            background: linear-gradient(135deg, var(--dark) 0%, #16213e 100%);
+            min-height: 100vh;
             color: white;
-            padding: 1rem 2rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            font-size: 1.1rem;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Animated Background Elements */
+        .bg-elements {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+        
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(126, 249, 255, 0.03);
+            filter: blur(80px);
+            animation: float 15s infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(5%, 5%); }
+            50% { transform: translate(10%, 0); }
+            75% { transform: translate(5%, -5%); }
+        }
+        
+        /* Glowing Particles */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent), transparent 70%);
+            opacity: 0;
+            animation: particle-float 15s infinite linear;
+        }
+        
+        @keyframes particle-float {
+            0% { transform: translate(0, 100vh) scale(0.5); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translate(100px, -100px) scale(1.2); opacity: 0; }
+        }
+        
+        /* Main Content */
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        /* Header with Advanced Animation */
+        .header {
+            text-align: center;
+            margin-bottom: 40px; /* Reduced margin */
+            perspective: 1000px;
+        }
+        
+        .logo-wrapper {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 30px; /* Reduced margin */
+            transform-style: preserve-3d;
+            animation: logo-float 8s ease-in-out infinite;
+        }
+        
+        @keyframes logo-float {
+            0%, 100% { transform: translateY(0) rotateX(0) rotateY(0); }
+            50% { transform: translateY(-20px) rotateX(5deg) rotateY(5deg); }
+        }
+        
+        .logo {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+        }
+        
+        .logo::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle at center, var(--accent), transparent 70%);
+            opacity: 0.3;
+            filter: blur(30px);
+            animation: pulse 4s infinite ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.2); opacity: 0.5; }
+        }
+        
+        .logo img {
+            width: 70px;
+            height: 70px;
+            z-index: 2;
+            transition: transform 0.5s ease;
+        }
+        
+        .logo:hover {
+            transform: rotateY(20deg) scale(1.05);
+        }
+        
+        .logo:hover img {
+            transform: scale(1.1);
+        }
+        
+        .header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 15px; /* Reduced margin */
+            background: linear-gradient(to right, var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 5px 15px rgba(62, 146, 204, 0.3);
+            animation: text-glow 2s infinite alternate;
+        }
+        
+        @keyframes text-glow {
+            from { text-shadow: 0 0 10px rgba(126, 249, 255, 0.3); }
+            to { text-shadow: 0 0 20px rgba(126, 249, 255, 0.6); }
+        }
+        
+        .header p {
+            font-size: 1.3rem;
+            color: rgba(255,255,255,0.8);
+            line-height: 1.6;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        /* Animated CTA Button with more space above */
+        .cta-container {
+            position: relative;
+            margin: 30px 0 60px 0; /* Added more space above (30px) */
+            perspective: 1000px;
+        }
+        
+        .cta-button {
+            position: relative;
             display: inline-flex;
             align-items: center;
-            gap: 0.75rem;
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
+            color: var(--dark);
+            border: none;
+            padding: 20px 50px;
+            font-size: 1.3rem;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 20px 50px rgba(62, 146, 204, 0.5);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-weight: 600;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            z-index: 1;
+        }
+        
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: -1;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-5px) scale(1.05) rotateX(5deg);
+            box-shadow: 0 25px 60px rgba(62, 146, 204, 0.7);
+        }
+        
+        .cta-button:hover::before {
+            opacity: 1;
+        }
+        
+        .cta-button i {
+            margin-left: 10px;
+            transition: transform 0.3s ease;
+        }
+        
+        .cta-button:hover i {
+            transform: translateX(5px) rotate(360deg);
+        }
+        
+        /* Enhanced Feature Cards (no flip) */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            width: 100%;
+            margin: 40px 0; /* Reduced margin */
+        }
+        
+        .feature-card {
+            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            z-index: 1;
+            height: 350px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .feature-card::before {
+
+content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(126, 249, 255, 0.1) 0%, transparent 70%);
+            transform: scale(0);
+            transition: transform 0.8s ease;
+            z-index: -1;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.3);
+            border-color: rgba(126, 249, 255, 0.3);
+        }
+        
+        .feature-card:hover::before {
+            transform: scale(1);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            transition: all 0.5s ease;
+            display: inline-block;
+            animation: icon-float 4s ease-in-out infinite;
+        }
+        
+        @keyframes icon-float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.1); }
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: white;
             transition: all 0.3s ease;
-            text-decoration: none;
-            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
         }
-
-        .start-chat-btn:hover {
-            background-color: #4f46e5; /* Darker primary */
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.6);
+        
+        .feature-card:hover h3 {
+            color: var(--accent);
         }
-
-        .start-chat-btn i {
-            animation: bounce 2s infinite;
+        
+        .feature-card p {
+            color: rgba(255,255,255,0.7);
+            font-size: 1rem;
+            line-height: 1.7;
+            transition: all 0.3s ease;
         }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translateY(0);
-            }
-            40% {
-                transform: translateY(-10px);
-            }
-            60% {
-                transform: translateY(-5px);
-            }
+        
+        .feature-card:hover p {
+            color: rgba(255,255,255,0.9);
         }
+        
+        /* Glowing border effect on hover */
+        .feature-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 20px;
+            border: 1px solid transparent;
+            background: linear-gradient(135deg, rgba(126, 249, 255, 0.3), rgba(62, 146, 204, 0.3)) border-box;
+            mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: destination-out;
+            mask-composite: exclude;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .feature-card:hover::after {
+            opacity: 1;
+        }
+        
+        /* Testimonial */
+        .testimonial {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 60px 0; /* Reduced margin */
+            max-width: 800px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .testimonial::before {
+            content: '\201C';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 100px;
+            color: rgba(126, 249, 255, 0.1);
+            font-family: serif;
+            line-height: 1;
+        }
+        
+        .testimonial::after {
+            content: '\201D';
+            position: absolute;
+            bottom: -20px;
+            right: 20px;
+            font-size: 100px;
+            color: rgba(126, 249, 255, 0.1);
+            font-family: serif;
+            line-height: 1;
+        }
+        
+        .testimonial-text {
+            font-size: 1.3rem;
+            font-style: italic;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 20px;
+            line-height: 1.7;
+            position: relative;
+        }
+        
+        .testimonial-author {
+            font-weight: 600;
+            color: var(--accent);
+            font-size: 1.1rem;
+        }
+        
+        /* Footer with Wave Animation */
+        .footer {
 
-        .footer-text {
+text-align: center;
+            padding-top: 60px;
+            margin-top: 40px; /* Reduced margin */
+            position: relative;
+            width: 100%;
+        }
+        
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1200 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" fill="rgba(255,255,255,0.05)" opacity=".25"/><path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" fill="rgba(255,255,255,0.05)" opacity=".5"/><path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" fill="rgba(255,255,255,0.05)"/></svg>');
+            background-size: cover;
+            background-repeat: no-repeat;
+            animation: wave 15s linear infinite;
+        }
+        
+        @keyframes wave {
+            0% { background-position-x: 0; }
+            100% { background-position-x: 1200px; }
+        }
+        
+        .disclaimer {
             font-size: 0.9rem;
-            color: #475569;
-            animation: fadeIn 2s ease-out;
+            color: rgba(255,255,255,0.6);
+            line-height: 1.6;
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .header p {
+                font-size: 1.1rem;
+            }
+            
+            .logo-wrapper {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .logo img {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .cta-button {
+                padding: 16px 40px;
+                font-size: 1.1rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .testimonial-text {
+                font-size: 1.1rem;
+            }
+            
+            .feature-card {
+                height: auto;
+                padding: 30px 20px;
+            }
         }
-
-        .logo-icon {
-    width: 60px;
-    height: 60px;
-    background-color: #6366f1;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 15px;
-    color: white;
-    font-size: 28px;
-    box-shadow: 5px 10px 20px rgba(79, 70, 229, 0.3);
-}
     </style>
 </head>
 <body>
-    <div class="hero-section">
-        <h1 class="hero-title">
-             <div class="logo-icon">
-                    <i class="fas fa-heartbeat"></i>
+    <!-- Animated Background Elements -->
+    <div class="bg-elements" id="bg-elements"></div>
+    
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Header with 3D Logo -->
+        <header class="header">
+            <div class="logo-wrapper">
+                <div class="logo">
+                    <img src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png" alt="Medic AI Logo">
                 </div>
-            Medic Chatbot
-        </h1>
-        <p class="hero-subtitle">Your personal AI assistant for health information and wellness advice.</p>
-        <a href="/chat" class="start-chat-btn">
-            Start Chat <i class="fas fa-comment-dots"></i>
-        </a>
+            </div>
+            <h1 class="animate__animated animate__fadeIn">Medic AI</h1>
+            <p class="animate__animated animate__fadeIn animate__delay-1s">Revolutionizing healthcare with advanced artificial intelligence for accurate medical insights</p>
+        </header>
+        
+        <!-- Animated CTA Button with more space above -->
+        <div class="cta-container animate__animated animate__fadeIn animate__delay-2s">
+            <button class="cta-button" id="ctaButton">
+                Get Started <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+        
+        <!-- Enhanced Feature Cards (no flip) -->
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-brain"></i></div>
+
+<h3>AI Diagnosis</h3>
+                <p>Our neural networks analyze symptoms with 95% clinical accuracy to provide reliable health assessments</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-heartbeat"></i></div>
+                <h3>Health Monitoring</h3>
+                <p>Track your vitals and receive personalized recommendations based on your health data</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-robot"></i></div>
+                <h3>24/7 Assistant</h3>
+                <p>Always available health companion that learns and adapts to your unique needs</p>
+            </div>
+        </div>
+        
+        <!-- Testimonial -->
+        <div class="testimonial animate__animated animate__fadeIn animate__delay-3s">
+            <p class="testimonial-text">"Medic AI's diagnostic accuracy helped identify my condition weeks before my doctor's appointment. The detailed explanation gave me peace of mind during a stressful time."</p>
+            <p class="testimonial-author">- Dr. Anjali Patel, Neurologist</p>
+        </div>
+        
+        <!-- Footer with Wave -->
+        <footer class="footer">
+            <p class="disclaimer">Medic AI provides health information for educational purposes only. Always consult a healthcare professional for medical advice. Our AI does not replace professional diagnosis or treatment.</p>
+        </footer>
     </div>
-    <p class="footer-text">Always consult a healthcare professional for medical advice.</p>
+
+    <script>
+        // Create background circles
+        const bgElements = document.getElementById('bg-elements');
+        for (let i = 0; i < 5; i++) {
+            const circle = document.createElement('div');
+            circle.classList.add('bg-circle');
+            
+            const size = Math.random() * 600 + 200;
+            const posX = Math.random() * 100;
+            const posY = Math.random() * 100;
+            const delay = Math.random() * 10;
+            const duration = Math.random() * 10 + 10;
+            
+            circle.style.width = `${size}px`;
+            circle.style.height = `${size}px`;
+            circle.style.left = `${posX}%`;
+            circle.style.top = `${posY}%`;
+            circle.style.animationDelay = `${delay}s`;
+            circle.style.animationDuration = `${duration}s`;
+            
+            bgElements.appendChild(circle);
+        }
+        
+        // Create floating particles
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            
+            const size = Math.random() * 10 + 5;
+            const posX = Math.random() * 100;
+            const delay = Math.random() * 15;
+            const duration = Math.random() * 15 + 10;
+            
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${posX}%`;
+            particle.style.animationDelay = `${delay}s`;
+            particle.style.animationDuration = `${duration}s`;
+            
+            bgElements.appendChild(particle);
+        }
+        
+        // Enhanced CTA button effect
+        const ctaButton = document.getElementById('ctaButton');
+        
+        ctaButton.addEventListener('mouseenter', () => {
+            // Create burst effect
+            for (let i = 0; i < 10; i++) {
+                const dot = document.createElement('div');
+                dot.style.position = 'absolute';
+                dot.style.width = '6px';
+                dot.style.height = '6px';
+                dot.style.backgroundColor = 'white';
+                dot.style.borderRadius = '50%';
+                dot.style.pointerEvents = 'none';
+                
+                // Random position around button
+                const angle = Math.random() * Math.PI * 2;
+                
+                const distance = Math.random() * 30 + 20;
+                const x = 50 + Math.cos(angle) * distance;
+                const y = 50 + Math.sin(angle) * distance;
+                dot.style.left = `${x}%` ;
+                dot.style.top =` ${y}%`;
+                dot.style.transform = 'translate(-50%, -50%)';
+                dot.style.opacity = '0';
+                dot.style.animation = `burst 0.8s ease-out ${i * 0.05}s forwards`;
+                
+                ctaButton.appendChild(dot);
+                
+                // Remove after animation
+                setTimeout(() => {
+                    dot.remove();
+                }, 1000);
+            }
+        });
+        
+        // Add burst animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes burst {
+                0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+                50% { opacity: 1; }
+                100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+            }
+            
+            .ripple {
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.7);
+                transform: scale(0);
+                animation: ripple 0.6s linear;
+                pointer-events: none;
+            }
+            
+            @keyframes ripple {
+                to { transform: scale(4); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Button click effect
+        ctaButton.addEventListener('click', function() {
+            // Ripple effect
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple');
+            this.appendChild(ripple);
+            
+            // Remove ripple after animation
+            setTimeout(() => {
+                ripple.remove();
+            }, 1000);
+            
+            // Button animation
+            this.style.animation = 'none';
+            this.classList.add('animate__animated', 'animate__rubberBand');
+            
+            setTimeout(() => {
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+            }, 300);
+            
+            setTimeout(() => {
+                window.location.href = '/chat';
+            }, 2000);
+        });
+    </script>
 </body>
 </html>
