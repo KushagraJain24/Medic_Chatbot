@@ -11,7 +11,7 @@ from pypdf import PdfReader
 from docx import Document
 
 # Load environment variables
-load_dotenv()
+load_dotenv(override=True)
 
 app = Flask(__name__)
 
@@ -77,6 +77,9 @@ def call_gemini_api(prompt, model="gemini-2.5-flash"): # Changed to 2.5-flash fo
         # Check for non-200 status codes (e.g., 400, 403, 500)
         if response.status_code != 200:
             print(f"API Error {response.status_code}: {response.text}")
+            if model == "gemini-2.5-flash":
+                print("Attempting fallback to gemini-1.5-flash...")
+                return call_gemini_api(prompt, model="gemini-1.5-flash")
             return f"Error from AI provider: {response.status_code}"
 
         result = response.json()
@@ -90,15 +93,24 @@ def call_gemini_api(prompt, model="gemini-2.5-flash"): # Changed to 2.5-flash fo
         traceback.print_exc()
         return "System error: Could not contact AI service."
 
-def analyze_image_with_gemini(base64_image, mime_type):
+def analyze_image_with_gemini(base64_image, mime_type, profile_context=""):
     """Analyzes an image using Gemini Vision."""
     # Using gemini-2.5-flash which is multimodal and stable
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
     headers = {'Content-Type': 'application/json'}
+    
+    prompt = f"""Analyze this medical image. {profile_context}Provide:
+1. **Description**: Describe what the image shows.
+2. **Findings**: Detail the key observations or indicators, highlighting abnormal findings if visible.
+3. **Concerns**: Mention any worrying or abnormal markers.
+4. **Recommendations**: Advise on next steps.
+
+Remember: Provide educational/informational analysis only. This is not a formal diagnosis.
+"""
     payload = {
         "contents": [{
             "parts": [
-                {"text": "Analyze this medical image and provide:\n1. **Description**\n2. **Findings**\n3. **Concerns**\n4. **Recommendations**"},
+                {"text": prompt},
                 {
                     "inlineData": {
                         "mimeType": mime_type,
@@ -126,13 +138,16 @@ def analyze_image_with_gemini(base64_image, mime_type):
         print(f"Vision Exception: {e}")
         return "System error during image analysis."
 
-def analyze_text_content(text_content, file_name=""):
+def analyze_text_content(text_content, file_name="", profile_context=""):
     """Analyzes general text content."""
     prompt = f"""Analyze the following medical report/text from '{file_name}':
-    1. **Summary**
-    2. **Key Metrics**
-    3. **Potential Concerns**
-    4. **Recommendations**
+    {profile_context}
+    
+    Provide:
+    1. **Summary**: A high-level overview of the report.
+    2. **Key Metrics**: A bulleted list of key biomarkers or parameters, highlighting any abnormal values (high/low).
+    3. **Potential Concerns**: What should the patient pay attention to?
+    4. **Recommendations**: Recommended next steps or follow-ups.
 
     Content: {text_content[:30000]}""" # Limit chars to avoid payload errors
     return call_gemini_api(prompt)
@@ -154,6 +169,23 @@ def chat_api():
     file_data_b64 = data.get('fileData')
     file_type = data.get('fileType')
     file_name = data.get('fileName')
+    user_profile = data.get('profile', {})
+    
+    # Build profile context to personalize the chatbot's response
+    profile_context = ""
+    if user_profile:
+        profile_parts = []
+        if user_profile.get('age'):
+            profile_parts.append(f"Age: {user_profile.get('age')}")
+        if user_profile.get('gender'):
+            profile_parts.append(f"Gender: {user_profile.get('gender')}")
+        if user_profile.get('allergies') and user_profile.get('allergies').strip().lower() != 'none':
+            profile_parts.append(f"Known Allergies: {user_profile.get('allergies')}")
+        if user_profile.get('conditions') and user_profile.get('conditions').strip().lower() != 'none':
+            profile_parts.append(f"Pre-existing conditions: {user_profile.get('conditions')}")
+        
+        if profile_parts:
+            profile_context = "Patient Background Context:\n" + "\n".join(f"- {part}" for part in profile_parts) + "\n\n"
     
     bot_response = ""
     
@@ -163,36 +195,38 @@ def chat_api():
             file_content_bytes = base64.b64decode(file_data_b64)
             
             if file_type.startswith('image/'):
-                bot_response = analyze_image_with_gemini(file_data_b64, file_type)
+                bot_response = analyze_image_with_gemini(file_data_b64, file_type, profile_context)
             
             elif file_type == 'application/pdf':
                 extracted_text = read_pdf_text(file_content_bytes)
                 if extracted_text:
-                    bot_response = analyze_text_content(extracted_text, file_name)
+                    bot_response = analyze_text_content(extracted_text, file_name, profile_context)
                 else:
                     bot_response = "Could not read text from PDF."
             
             elif 'wordprocessingml' in file_type: # DOCX
                 extracted_text = read_docx_text(file_content_bytes)
                 if extracted_text:
-                    bot_response = analyze_text_content(extracted_text, file_name)
+                    bot_response = analyze_text_content(extracted_text, file_name, profile_context)
                 else:
                     bot_response = "Could not read text from DOCX."
             
             elif file_type == 'text/plain':
                 decoded_text = file_content_bytes.decode('utf-8', errors='ignore')
-                bot_response = analyze_text_content(decoded_text, file_name)
+                bot_response = analyze_text_content(decoded_text, file_name, profile_context)
             
             else:
                 bot_response = "Unsupported file type."
 
         elif user_message:
-            full_prompt = f"""Act as a medical assistant. The user says: "{user_message}". 
+            full_prompt = f"""{profile_context}Act as a medical assistant. The user says: "{user_message}". 
             Provide:
             1. Symptoms Analysis
             2. Possible Causes (Disclaimer: Not a diagnosis)
             3. Home Remedies & Diet
             4. When to see a doctor
+            
+            Keep in mind the Patient Background Context (if provided above) to customize your analysis, warnings, and remedy suggestions (especially checking for potential drug/herb-allergy interactions or exacerbation of chronic conditions).
             """
             bot_response = call_gemini_api(full_prompt)
 
@@ -202,6 +236,22 @@ def chat_api():
         print(f"Server Error: {e}")
         traceback.print_exc()
         return jsonify({'error': 'Internal server error'}), 500
+
+@app.route('/api/explain', methods=['POST'])
+def explain_api():
+    data = request.get_json()
+    term = data.get('term')
+    if not term:
+        return jsonify({'error': 'No term provided'}), 400
+    
+    prompt = f"""Explain the medical term '{term}' in simple layman's language. 
+    Provide:
+    1. A simple definition (1-2 sentences).
+    2. Why it matters or what it relates to (1 sentence).
+    Keep the explanation extremely brief, clear, and easy for a non-medical person to understand. Avoid using other complex medical jargon in the explanation.
+    """
+    explanation = call_gemini_api(prompt)
+    return jsonify({'explanation': explanation})
 
 if __name__ == '__main__':
     app.run(debug=True)

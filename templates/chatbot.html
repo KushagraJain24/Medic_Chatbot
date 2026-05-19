@@ -61,6 +61,127 @@
             position: relative;
         }
         
+        /* Right Health Dashboard */
+        .health-dashboard {
+            width: 320px;
+            background-color: var(--dark-bg);
+            border-left: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+        }
+        
+        .health-dashboard.collapsed {
+            width: 0;
+            opacity: 0;
+            pointer-events: none;
+            border-left-width: 0;
+            overflow: hidden;
+        }
+
+        body.theme-light .health-dashboard {
+            border-left: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .dashboard-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        body.theme-light .dashboard-header {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .dashboard-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dashboard-tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .dashboard-tab {
+            flex: 1;
+            padding: 0.75rem 0.5rem;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-secondary);
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .dashboard-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .dashboard-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .dashboard-pane {
+            display: none;
+        }
+
+        .dashboard-pane.active {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .speech-speak-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.95rem;
+            margin-left: 0.5rem;
+            transition: color 0.2s;
+            vertical-align: middle;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+        }
+        
+        .speech-speak-btn:hover {
+            color: var(--primary);
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        body.theme-light .speech-speak-btn:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        
+        .text-xxs {
+            font-size: 0.7rem;
+        }
+        
+        .text-xxxs {
+            font-size: 0.6rem;
+        }
+        
         /* Sidebar */
         .sidebar {
             width: 300px;
@@ -888,6 +1009,28 @@
                 opacity: 0;
                 cursor: pointer;
             }
+            
+            .health-dashboard {
+                position: fixed;
+                top: 0;
+                right: 0;
+                width: 80%;
+                height: 100%;
+                transform: translateX(100%);
+                z-index: 20;
+                border-left: 1px solid rgba(255, 255, 255, 0.05);
+            }
+            
+            .health-dashboard.open {
+                transform: translateX(0);
+            }
+            
+            .health-dashboard.collapsed {
+                transform: translateX(100%);
+                width: 80%;
+                opacity: 1;
+                pointer-events: all;
+            }
         }
         
 .logo-icon {
@@ -961,9 +1104,14 @@
         <div class="chat-area">
             <div class="chat-header">
                 <div class="chat-title" id="current-chat-title">New Chat</div>
-                <button class="download-chat-btn" id="download-chat-btn">
-                    <i class="fas fa-download"></i> Download Chat
-                </button>
+                <div class="flex items-center gap-2">
+                    <button class="download-chat-btn" id="download-chat-btn">
+                        <i class="fas fa-download"></i> Download Chat
+                    </button>
+                    <button class="download-chat-btn" id="toggle-dashboard-btn" title="Toggle Health Dashboard">
+                        <i class="fas fa-heartbeat"></i> Health Toolbox
+                    </button>
+                </div>
             </div>
             
             <div class="chat-messages" id="chat-messages">
@@ -980,6 +1128,9 @@
                         <input type="file" class="file-upload-input" id="file-upload-input" accept=".pdf,.jpg,.jpeg,.png,.txt,.doc,.docx">
                     </div>
                     <input type="text" class="chat-input" id="user-input" placeholder="Describe your health concern..." autocomplete="off">
+                    <button class="send-btn mr-1" id="voice-input-btn" style="background-color: var(--card-bg); color: var(--text-secondary);" title="Voice Input">
+                        <i class="fas fa-microphone"></i>
+                    </button>
                     <button class="send-btn" id="send-btn">
                         <i class="fas fa-paper-plane"></i>
                     </button>
@@ -998,6 +1149,141 @@
                     <button class="quick-option" data-prompt="Cold symptoms">Cold symptoms</button>
                     <button class="quick-option" data-prompt="Stomach ache">Stomach ache</button>
                     <button class="quick-option" data-prompt="Allergy remedies">Allergy remedies</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Health Toolbox Right Dashboard -->
+        <div class="health-dashboard collapsed" id="health-dashboard">
+            <div class="dashboard-header">
+                <div class="dashboard-title">
+                    <i class="fas fa-laptop-medical"></i>
+                    <span>Health Toolbox</span>
+                </div>
+                <button class="chat-action-btn" id="close-dashboard-btn" style="font-size: 1.1rem;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="dashboard-tabs">
+                <div class="dashboard-tab active" data-tab="symptoms">Symptoms</div>
+                <div class="dashboard-tab" data-tab="explainer">Explainer</div>
+            </div>
+            
+            <div class="dashboard-content">
+                <!-- Symptoms Tab -->
+                <div class="dashboard-pane active" id="pane-symptoms">
+                    <p class="text-xs text-slate-400">Check symptoms below to build your query:</p>
+                    
+                    <div class="flex flex-col gap-3 mt-1">
+                        <div>
+                            <span class="text-xs font-semibold text-indigo-400 block mb-1">Head & Neck</span>
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <label class="flex items-center gap-1.5 text-xs cursor-pointer bg-slate-800 p-1.5 rounded hover:bg-slate-700">
+                                    <input type="checkbox" class="symptom-check" value="Headache"> Headache
+                                </label>
+                                <label class="flex items-center gap-1.5 text-xs cursor-pointer bg-slate-800 p-1.5 rounded hover:bg-slate-700">
+                                    <input type="checkbox" class="symptom-check" value="Dizziness"> Dizziness
+                                </label>
+                                <label class="flex items-center gap-1.5 text-xs cursor-pointer bg-slate-800 p-1.5 rounded hover:bg-slate-700">
+                                    <input type="checkbox" class="symptom-check" value="Sore throat"> Sore throat
+                                </label>
+                                <label class="flex items-center gap-1.5 text-xs cursor-pointer bg-slate-800 p-1.5 rounded hover:bg-slate-700">
+                                    <input type="checkbox" class="symptom-check" value="Fever"> Fever
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <span class="text-xs font-semibold text-indigo-400 block mb-1">Chest & Lungs</span>
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <label class="flex items-center gap-1.5 text-xs cursor-pointer bg-slate-800 p-1.5 rounded hover:bg-slate-700">
+                                    <input type="checkbox" class="symptom-check" value="Cough"> Cough
+                                </label>
+                                <label class="flex items-center gap-1.5 text-xs cursor-pointer bg-slate-800 p-1.5 rounded hover:bg-slate-700">
+                                    <input type="checkbox" class="symptom-check" value="Shortness of breath"> Dyspnea
+                                </label>
+                                <label class="flex items-center gap-1.5 text-xs cursor-pointer bg-slate-800 p-1.5 rounded hover:bg-slate-700">
+                                    <input type="checkbox" class="symptom-check" value="Chest tightness"> Chest pain
+                                </label>
+                                <label class="flex items-center gap-1.5 text-xs cursor-pointer bg-slate-800 p-1.5 rounded hover:bg-slate-700">
+                                    <input type="checkbox" class="symptom-check" value="Palpitations"> Palpitations
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span class="text-xs font-semibold text-indigo-400 block mb-1">Stomach & Digestive</span>
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <label class="flex items-center gap-1.5 text-xs cursor-pointer bg-slate-800 p-1.5 rounded hover:bg-slate-700">
+                                    <input type="checkbox" class="symptom-check" value="Nausea"> Nausea
+                                </label>
+                                <label class="flex items-center gap-1.5 text-xs cursor-pointer bg-slate-800 p-1.5 rounded hover:bg-slate-700">
+                                    <input type="checkbox" class="symptom-check" value="Stomach ache"> Stomach pain
+                                </label>
+                                <label class="flex items-center gap-1.5 text-xs cursor-pointer bg-slate-800 p-1.5 rounded hover:bg-slate-700">
+                                    <input type="checkbox" class="symptom-check" value="Acid reflux"> Acid reflux
+                                </label>
+                                <label class="flex items-center gap-1.5 text-xs cursor-pointer bg-slate-800 p-1.5 rounded hover:bg-slate-700">
+                                    <input type="checkbox" class="symptom-check" value="Diarrhea"> Diarrhea
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span class="text-xs font-semibold text-indigo-400 block mb-1">Others</span>
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <label class="flex items-center gap-1.5 text-xs cursor-pointer bg-slate-800 p-1.5 rounded hover:bg-slate-700">
+                                    <input type="checkbox" class="symptom-check" value="Muscle aches"> Muscle ache
+                                </label>
+                                <label class="flex items-center gap-1.5 text-xs cursor-pointer bg-slate-800 p-1.5 rounded hover:bg-slate-700">
+                                    <input type="checkbox" class="symptom-check" value="Fatigue"> Fatigue
+                                </label>
+                                <label class="flex items-center gap-1.5 text-xs cursor-pointer bg-slate-800 p-1.5 rounded hover:bg-slate-700">
+                                    <input type="checkbox" class="symptom-check" value="Skin rash"> Skin rash
+                                </label>
+                                <label class="flex items-center gap-1.5 text-xs cursor-pointer bg-slate-800 p-1.5 rounded hover:bg-slate-700">
+                                    <input type="checkbox" class="symptom-check" value="Joint stiffness"> Joint pain
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="new-chat-btn mt-3 py-2 text-xs" id="insert-symptoms-btn">
+                        <i class="fas fa-plus"></i> Insert Symptoms
+                    </button>
+                    <button class="modal-btn modal-btn-secondary mt-1 py-1.5 text-xs w-full text-center" id="clear-symptoms-btn">
+                        Clear Selection
+                    </button>
+                </div>
+                
+
+                
+                <!-- Medical Jargon Explainer Tab -->
+                <div class="dashboard-pane" id="pane-explainer">
+                    <p class="text-xs text-slate-400">Define medical terms in plain English:</p>
+                    
+                    <div class="flex flex-col gap-3 mt-1">
+                        <div class="flex gap-2">
+                            <input type="text" id="explainer-term-input" placeholder="e.g. Hypertrophy, Dyspnea" class="flex-1 text-xs p-2 rounded bg-slate-900 border border-slate-700 text-white">
+                            <button class="send-btn w-9 h-9" id="explain-term-btn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        
+                        <div id="explanation-result-container" class="bg-slate-800 p-3 rounded-lg hidden flex-col gap-2">
+                            <span class="text-xs font-semibold text-indigo-400" id="explanation-result-title">Explanation</span>
+                            <p class="text-xs text-slate-200" id="explanation-result-text"></p>
+                        </div>
+                        
+                        <div class="flex flex-col gap-2">
+                            <span class="text-xs font-semibold text-slate-300">Tips</span>
+                            <ul class="text-xxs text-slate-400 list-disc pl-4 flex flex-col gap-1">
+                                <li>Double-click any word in bot responses to automatically define it.</li>
+                                <li>Type medical shorthand or drug names to see brief definitions.</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1122,6 +1408,14 @@
                             <option value="prefer_not_to_say">Prefer not to say</option>
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label class="form-label" for="profile-allergies-input">Known Allergies</label>
+                        <input type="text" class="modal-input" id="profile-allergies-input" placeholder="e.g. Penicillin, Peanuts (or None)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="profile-conditions-input">Chronic Conditions</label>
+                        <input type="text" class="modal-input" id="profile-conditions-input" placeholder="e.g. Asthma, Hypertension, Diabetes">
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -1202,6 +1496,8 @@
     let profileNameInput;
     let profileAgeInput;
     let profileGenderSelect;
+    let profileAllergiesInput;
+    let profileConditionsInput;
     let profileCancelBtn;
     let profileSaveBtn;
     let profileModalClose;
@@ -1212,6 +1508,24 @@
     let messageModalOkBtn;
     let messageModalCloseBtn;
     
+    // New Health Toolbox Dashboard Elements
+    let toggleDashboardBtn;
+    let closeDashboardBtn;
+    let healthDashboard;
+    let voiceInputBtn;
+    let insertSymptomsBtn;
+    let clearSymptomsBtn;
+    let medNameInput;
+    let medDoseInput;
+    let medTimeInput;
+    let addMedBtn;
+    let medsList;
+    let explainerTermInput;
+    let explainTermBtn;
+    let explanationResultContainer;
+    let explanationResultTitle;
+    let explanationResultText;
+    
     // State
     let currentChatId = '';
     let chats = {};
@@ -1221,6 +1535,7 @@
     let currentUploadedFile = null;
     let userProfile = {};
     let appSettings = {};
+    let medications = [];
 
     // Base URL for Flask API endpoints
     const FLASK_API_BASE_URL = 'http://127.0.0.1:5000/api';
@@ -1259,6 +1574,7 @@
         renameCancelBtn = document.getElementById('rename-cancel-btn');
         renameModalClose = document.getElementById('rename-modal-close');
         
+        sidebar = document.getElementById('sidebar');
         deleteModal = document.getElementById('delete-modal');
         deleteConfirmBtn = document.getElementById('delete-confirm-btn');
         deleteCancelBtn = document.getElementById('delete-cancel-btn');
@@ -1281,6 +1597,8 @@
         profileNameInput = document.getElementById('profile-name-input');
         profileAgeInput = document.getElementById('profile-age-input');
         profileGenderSelect = document.getElementById('profile-gender-select');
+        profileAllergiesInput = document.getElementById('profile-allergies-input');
+        profileConditionsInput = document.getElementById('profile-conditions-input');
         profileCancelBtn = document.getElementById('profile-cancel-btn');
         profileSaveBtn = document.getElementById('profile-save-btn');
         profileModalClose = document.getElementById('profile-modal-close');
@@ -1291,10 +1609,31 @@
         messageModalOkBtn = document.getElementById('message-modal-ok');
         messageModalCloseBtn = document.getElementById('message-modal-close');
 
+        // New dashboard bindings
+        toggleDashboardBtn = document.getElementById('toggle-dashboard-btn');
+        closeDashboardBtn = document.getElementById('close-dashboard-btn');
+        healthDashboard = document.getElementById('health-dashboard');
+        voiceInputBtn = document.getElementById('voice-input-btn');
+        insertSymptomsBtn = document.getElementById('insert-symptoms-btn');
+        clearSymptomsBtn = document.getElementById('clear-symptoms-btn');
+        medNameInput = document.getElementById('med-name');
+        medDoseInput = document.getElementById('med-dose');
+        medTimeInput = document.getElementById('med-time');
+        addMedBtn = document.getElementById('add-med-btn');
+        medsList = document.getElementById('meds-list');
+        explainerTermInput = document.getElementById('explainer-term-input');
+        explainTermBtn = document.getElementById('explain-term-btn');
+        explanationResultContainer = document.getElementById('explanation-result-container');
+        explanationResultTitle = document.getElementById('explanation-result-title');
+        explanationResultText = document.getElementById('explanation-result-text');
+
         loadChats(); // Load saved chats from localStorage
         loadProfile(); // Load profile from localStorage
         loadSettings(); // Load settings from localStorage
         applySettings(appSettings); // Apply loaded settings
+        
+        initSpeechRecognition(); // Setup webkitSpeechRecognition
+        setupDashboardTabs(); // Setup toolbox tab switching
 
         // If no chats exist OR loading failed, create a new one
         if (Object.keys(chats).length === 0) {
@@ -1436,6 +1775,35 @@
                 closeMessageModal();
             }
         });
+
+        // New dashboard toggle events
+        if (toggleDashboardBtn) toggleDashboardBtn.addEventListener('click', toggleDashboard);
+        if (closeDashboardBtn) closeDashboardBtn.addEventListener('click', closeDashboard);
+        
+        // Voice mic event
+        if (voiceInputBtn) voiceInputBtn.addEventListener('click', toggleSpeechRecognition);
+        
+        // Symptoms selector events
+        if (insertSymptomsBtn) insertSymptomsBtn.addEventListener('click', insertSymptoms);
+        if (clearSymptomsBtn) clearSymptomsBtn.addEventListener('click', clearSymptomsSelection);
+        
+        // Medication checklist events
+        if (addMedBtn) addMedBtn.addEventListener('click', addMedication);
+        if (medNameInput) medNameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addMedication();
+        });
+        
+        // Explainer lookup event
+        if (explainTermBtn) explainTermBtn.addEventListener('click', () => {
+            const term = explainerTermInput.value.trim();
+            if (term) explainMedicalTerm(term);
+        });
+        if (explainerTermInput) explainerTermInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const term = explainerTermInput.value.trim();
+                if (term) explainMedicalTerm(term);
+            }
+        });
     }
 
     // Custom message modal functions
@@ -1519,7 +1887,8 @@
                     fileData: base64FileData, // Send as base64
                     fileType: file.type,
                     fileName: file.name,
-                    chatId: currentChatId 
+                    chatId: currentChatId,
+                    profile: userProfile
                 })
             });
             
@@ -1581,6 +1950,8 @@
         profileNameInput.value = userProfile.name || '';
         profileAgeInput.value = userProfile.age || '';
         profileGenderSelect.value = userProfile.gender || '';
+        profileAllergiesInput.value = userProfile.allergies || '';
+        profileConditionsInput.value = userProfile.conditions || '';
         updateProfileDisplayName();
     }
 
@@ -1589,8 +1960,10 @@
         const name = profileNameInput.value.trim();
         const age = profileAgeInput.value.trim();
         const gender = profileGenderSelect.value;
+        const allergies = profileAllergiesInput.value.trim();
+        const conditions = profileConditionsInput.value.trim();
 
-        userProfile = { name, age, gender }; // Update local state
+        userProfile = { name, age, gender, allergies, conditions }; // Update local state
         localStorage.setItem('medicChatbotProfile', JSON.stringify(userProfile)); // Save to localStorage
         updateProfileDisplayName();
         closeProfileModal();
@@ -1873,7 +2246,33 @@
     function addMessage(role, content) {
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${role}-message`;
-        messageDiv.innerHTML = formatMessageContent(content);
+        
+        const textContainer = document.createElement('div');
+        textContainer.style.display = 'inline-block';
+        textContainer.style.width = role === 'bot' ? 'calc(100% - 30px)' : '100%';
+        textContainer.style.verticalAlign = 'top';
+        textContainer.innerHTML = formatMessageContent(content);
+        messageDiv.appendChild(textContainer);
+        
+        if (role === 'bot') {
+            const speakBtn = document.createElement('button');
+            speakBtn.className = 'speech-speak-btn';
+            speakBtn.title = 'Read Aloud';
+            speakBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+            speakBtn.addEventListener('click', () => {
+                speakText(content, speakBtn);
+            });
+            messageDiv.appendChild(speakBtn);
+            
+            textContainer.addEventListener('dblclick', () => {
+                const selectedText = window.getSelection().toString().trim();
+                // Strip leading/trailing punctuation
+                const cleanedTerm = selectedText.replace(/^[.,\/#!$%\^&\*;:{}=\-_`~()?"']+|[.,\/#!$%\^&\*;:{}=\-_`~()?"']+$/g, "");
+                if (cleanedTerm) {
+                    explainMedicalTerm(cleanedTerm);
+                }
+            });
+        }
         
         chatMessages.appendChild(messageDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -1962,7 +2361,11 @@
             const response = await fetch(`${FLASK_API_BASE_URL}/chat`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: message, chatId: currentChatId })
+                body: JSON.stringify({ 
+                    message: message, 
+                    chatId: currentChatId,
+                    profile: userProfile
+                })
             });
             
             const result = await response.json();
@@ -2045,6 +2448,262 @@
         html2pdf().from(tempDiv).set(opt).save();
     }
     
+    // Speech Recognition (Voice Input)
+    let recognition = null;
+    let isRecording = false;
+    
+    function initSpeechRecognition() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+            
+            recognition.onstart = () => {
+                isRecording = true;
+                if (voiceInputBtn) {
+                    voiceInputBtn.style.color = '#ef4444';
+                    voiceInputBtn.innerHTML = '<i class="fas fa-microphone-slash"></i>';
+                }
+                userInput.placeholder = "Listening...";
+            };
+            
+            recognition.onend = () => {
+                isRecording = false;
+                if (voiceInputBtn) {
+                    voiceInputBtn.style.color = 'var(--text-secondary)';
+                    voiceInputBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+                }
+                userInput.placeholder = "Describe your health concern...";
+            };
+            
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                userInput.value = transcript;
+                userInput.focus();
+            };
+            
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                isRecording = false;
+                if (voiceInputBtn) {
+                    voiceInputBtn.style.color = 'var(--text-secondary)';
+                    voiceInputBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+                }
+                userInput.placeholder = "Describe your health concern...";
+            };
+        } else {
+            if (voiceInputBtn) voiceInputBtn.style.display = 'none';
+            console.warn('Speech recognition not supported in this browser.');
+        }
+    }
+    
+    function toggleSpeechRecognition() {
+        if (!recognition) return;
+        if (isRecording) {
+            recognition.stop();
+        } else {
+            recognition.start();
+        }
+    }
+
+    // Speech Synthesis (Text to Speech)
+    let currentUtterance = null;
+    let currentSpeakingText = null;
+    let activeSpeakBtn = null;
+
+    function cleanTextForSpeech(text) {
+        return text
+            // Remove HTML tags
+            .replace(/<[^>]*>/g, '')
+            // Remove code blocks
+            .replace(/```[\s\S]*?```/g, '')
+            // Remove inline code ticks
+            .replace(/`/g, '')
+            // Remove bold/italic asterisks
+            .replace(/\*+/g, '')
+            // Remove hashtags (e.g. ###, ##, #)
+            .replace(/#+/g, '')
+            // Remove dashes (e.g. ---, --, -)
+            .replace(/--+/g, '') // Remove multiple dashes
+            // Remove markdown bullet points at beginning of lines
+            .replace(/^\s*-\s+/gm, '')
+            // Remove info card tags
+            .replace(/\[!.*?\]/g, '')
+            .replace(/\[\/!\]/g, '')
+            // Clean up extra spaces
+            .replace(/\s+/g, ' ')
+            .trim();
+    }
+
+    function speakText(text, speakBtn) {
+        if (!('speechSynthesis' in window)) {
+            console.warn('Speech synthesis not supported in this browser.');
+            return;
+        }
+
+        // Check if we are interacting with the same button/text
+        if (activeSpeakBtn === speakBtn) {
+            if (window.speechSynthesis.speaking) {
+                if (window.speechSynthesis.paused) {
+                    window.speechSynthesis.resume();
+                    speakBtn.innerHTML = '<i class="fas fa-volume-up text-indigo-400 animate-pulse"></i>';
+                } else {
+                    window.speechSynthesis.pause();
+                    speakBtn.innerHTML = '<i class="fas fa-volume-mute text-slate-400"></i>';
+                }
+                return;
+            }
+        }
+
+        // If something else was speaking, reset its icon
+        if (activeSpeakBtn && activeSpeakBtn !== speakBtn) {
+            activeSpeakBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+        }
+
+        // Cancel current speaking
+        window.speechSynthesis.cancel();
+
+        // Clean text
+        const cleanText = cleanTextForSpeech(text);
+        if (!cleanText) return;
+
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+        currentUtterance = utterance;
+        activeSpeakBtn = speakBtn;
+        currentSpeakingText = text;
+
+        // Visual feedback when speaking starts
+        speakBtn.innerHTML = '<i class="fas fa-volume-up text-indigo-400 animate-pulse"></i>';
+
+        utterance.onend = () => {
+            if (activeSpeakBtn === speakBtn) {
+                speakBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                activeSpeakBtn = null;
+                currentSpeakingText = null;
+                currentUtterance = null;
+            }
+        };
+
+        utterance.onerror = () => {
+            if (activeSpeakBtn === speakBtn) {
+                speakBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                activeSpeakBtn = null;
+                currentSpeakingText = null;
+                currentUtterance = null;
+            }
+        };
+
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        window.speechSynthesis.speak(utterance);
+    }
+
+    // Tab switcher in Health Dashboard
+    function setupDashboardTabs() {
+        const tabs = document.querySelectorAll('.dashboard-tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.dashboard-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.dashboard-pane').forEach(p => p.classList.remove('active'));
+                
+                tab.classList.add('active');
+                const paneId = `pane-${tab.dataset.tab}`;
+                const pane = document.getElementById(paneId);
+                if (pane) {
+                    pane.classList.add('active');
+                }
+            });
+        });
+    }
+
+    // Toggle and Close Dashboard
+    function toggleDashboard() {
+        if (healthDashboard) {
+            healthDashboard.classList.toggle('collapsed');
+            healthDashboard.classList.toggle('open'); // mobile fixed layout toggle
+        }
+    }
+    
+    function closeDashboard() {
+        if (healthDashboard) {
+            healthDashboard.classList.add('collapsed');
+            healthDashboard.classList.remove('open');
+        }
+    }
+
+    // Symptom Selector logic
+    function insertSymptoms() {
+        const checkedBoxes = document.querySelectorAll('.symptom-check:checked');
+        if (checkedBoxes.length === 0) return;
+        
+        const symptomsList = Array.from(checkedBoxes).map(cb => cb.value).join(', ');
+        const messagePrefix = `I am experiencing the following symptoms: ${symptomsList}. `;
+        
+        userInput.value = messagePrefix + userInput.value;
+        userInput.focus();
+        clearSymptomsSelection();
+    }
+    
+    function clearSymptomsSelection() {
+        document.querySelectorAll('.symptom-check').forEach(cb => cb.checked = false);
+    }
+
+
+
+    // Medical Jargon Explainer
+    async function explainMedicalTerm(term) {
+        if (!term) return;
+        
+        // Switch to explainer tab
+        const tab = document.querySelector('.dashboard-tab[data-tab="explainer"]');
+        if (tab) tab.click();
+        
+        explainerTermInput.value = term;
+        
+        if (healthDashboard && healthDashboard.classList.contains('collapsed')) {
+            toggleDashboard();
+        }
+        
+        if (explanationResultContainer) {
+            explanationResultContainer.classList.add('hidden');
+        }
+        
+        explainTermBtn.innerHTML = '<div class="loading-spinner w-3.5 h-3.5 border-2"></div>';
+        explainTermBtn.disabled = true;
+        
+        try {
+            const response = await fetch(`${FLASK_API_BASE_URL}/explain`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ term })
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok && explanationResultContainer) {
+                explanationResultTitle.textContent = `Explanation: ${term}`;
+                explanationResultText.textContent = result.explanation;
+                explanationResultContainer.classList.remove('hidden');
+            } else if (explanationResultContainer) {
+                explanationResultTitle.textContent = 'Error';
+                explanationResultText.textContent = `Could not explain: ${result.error || 'Unknown error'}`;
+                explanationResultContainer.classList.remove('hidden');
+            }
+        } catch (error) {
+            console.error('Network error during explain lookup:', error);
+            if (explanationResultContainer) {
+                explanationResultTitle.textContent = 'Network Error';
+                explanationResultText.textContent = 'Could not retrieve explanation. Check your network connection.';
+                explanationResultContainer.classList.remove('hidden');
+            }
+        } finally {
+            explainTermBtn.innerHTML = '<i class="fas fa-search"></i>';
+            explainTermBtn.disabled = false;
+        }
+    }
+
     // Initialize the app
     window.addEventListener('DOMContentLoaded', init);
 </script>
