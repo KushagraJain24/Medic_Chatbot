@@ -1046,6 +1046,206 @@
     font-size: 28px;
     box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
 }
+
+        /* ===== SKIN ANALYSIS CAMERA MODAL ===== */
+        .camera-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+        }
+        .camera-modal.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .camera-panel {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 1.25rem;
+            padding: 1.75rem;
+            width: 90%;
+            max-width: 560px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(99,102,241,0.1);
+            transform: scale(0.95) translateY(20px);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .camera-modal.open .camera-panel {
+            transform: scale(1) translateY(0);
+        }
+        .camera-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+        }
+        .camera-panel-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .camera-panel-title i {
+            color: var(--primary);
+        }
+        .camera-close-btn {
+            background: rgba(255,255,255,0.07);
+            border: none;
+            color: var(--text-secondary);
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .camera-close-btn:hover { background: rgba(255,255,255,0.15); color: var(--text-primary); }
+        .camera-viewfinder {
+            width: 100%;
+            aspect-ratio: 4/3;
+            background: #000;
+            border-radius: 0.85rem;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid rgba(99, 102, 241, 0.25);
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
+        }
+        .camera-viewfinder video,
+        .camera-viewfinder canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .camera-viewfinder canvas { display: none; }
+        .camera-corner {
+            position: absolute;
+            width: 22px; height: 22px;
+            border-color: rgba(99,102,241,0.7);
+            border-style: solid;
+            pointer-events: none;
+        }
+        .camera-corner.tl { top: 10px; left: 10px; border-width: 2px 0 0 2px; border-radius: 4px 0 0 0; }
+        .camera-corner.tr { top: 10px; right: 10px; border-width: 2px 2px 0 0; border-radius: 0 4px 0 0; }
+        .camera-corner.bl { bottom: 10px; left: 10px; border-width: 0 0 2px 2px; border-radius: 0 0 0 4px; }
+        .camera-corner.br { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; border-radius: 0 0 4px 0; }
+        .camera-scanning-line {
+            position: absolute;
+            left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(99,102,241,0.8), transparent);
+            animation: scanLine 2.5s ease-in-out infinite;
+            pointer-events: none;
+        }
+        @keyframes scanLine {
+            0%   { top: 10%; opacity: 0; }
+            10%  { opacity: 1; }
+            90%  { opacity: 1; }
+            100% { top: 90%; opacity: 0; }
+        }
+        .camera-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            color: var(--text-secondary);
+            height: 100%;
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 1rem;
+        }
+        .camera-placeholder i { font-size: 2.5rem; color: var(--primary); opacity: 0.6; }
+        .camera-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.1rem;
+            flex-wrap: wrap;
+        }
+        .cam-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 0.7rem 1rem;
+            border-radius: 0.65rem;
+            border: none;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            transition: all 0.2s;
+        }
+        .cam-btn-primary { background: var(--primary); color: white; }
+        .cam-btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+        .cam-btn-secondary { background: rgba(99,102,241,0.15); color: var(--primary); border: 1px solid rgba(99,102,241,0.3); }
+        .cam-btn-secondary:hover { background: rgba(99,102,241,0.25); }
+        .cam-btn-success { background: linear-gradient(135deg,#059669,#10b981); color: white; }
+        .cam-btn-success:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        .cam-btn-danger { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+        .cam-btn-danger:hover { background: rgba(239,68,68,0.25); }
+        .cam-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
+        .camera-tip {
+            margin-top: 1rem;
+            padding: 0.65rem 0.9rem;
+            background: rgba(99,102,241,0.08);
+            border-left: 3px solid rgba(99,102,241,0.5);
+            border-radius: 0 0.5rem 0.5rem 0;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .camera-tip strong { color: var(--primary); }
+        .camera-status-badge {
+            position: absolute;
+            top: 10px; left: 50%;
+            transform: translateX(-50%);
+            background: rgba(5, 150, 105, 0.9);
+            color: white;
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            display: none;
+            align-items: center;
+            gap: 0.35rem;
+            backdrop-filter: blur(4px);
+        }
+        .camera-status-badge.live { display: flex; }
+        .cam-live-dot {
+            width: 7px; height: 7px;
+            background: #fff;
+            border-radius: 50%;
+            animation: pulse 1.2s infinite;
+        }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+        .skin-btn {
+            background-color: rgba(124, 58, 237, 0.2);
+            color: #a78bfa;
+            padding: 0.9rem 0.75rem;
+            border-radius: 0.75rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .skin-btn:hover { background-color: rgba(124, 58, 237, 0.35); }
     </style>
 </head>
 <body>
@@ -1127,6 +1327,10 @@
                         </button>
                         <input type="file" class="file-upload-input" id="file-upload-input" accept=".pdf,.jpg,.jpeg,.png,.txt,.doc,.docx">
                     </div>
+                    <button class="skin-btn" id="skin-camera-btn" title="Skin Analysis">
+                        <i class="fas fa-camera"></i>
+                        <span>Skin Analysis</span>
+                    </button>
                     <input type="text" class="chat-input" id="user-input" placeholder="Describe your health concern..." autocomplete="off">
                     <button class="send-btn mr-1" id="voice-input-btn" style="background-color: var(--card-bg); color: var(--text-secondary);" title="Voice Input">
                         <i class="fas fa-microphone"></i>
@@ -1288,7 +1492,59 @@
             </div>
         </div>
     </div>
-    
+
+    <!-- ===== SKIN ANALYSIS CAMERA MODAL ===== -->
+    <div class="camera-modal" id="camera-modal">
+        <div class="camera-panel">
+            <div class="camera-panel-header">
+                <div class="camera-panel-title">
+                    <i class="fas fa-spa"></i>
+                    Skin Analysis
+                </div>
+                <button class="camera-close-btn" id="camera-modal-close"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="camera-viewfinder" id="camera-viewfinder">
+                <!-- Live video stream -->
+                <video id="camera-video" autoplay playsinline muted></video>
+                <!-- Snapshot canvas (hidden until capture) -->
+                <canvas id="camera-canvas"></canvas>
+                <!-- Corner decorations -->
+                <div class="camera-corner tl"></div>
+                <div class="camera-corner tr"></div>
+                <div class="camera-corner bl"></div>
+                <div class="camera-corner br"></div>
+                <!-- Scanning line animation -->
+                <div class="camera-scanning-line" id="cam-scan-line"></div>
+                <!-- Live badge -->
+                <div class="camera-status-badge" id="cam-live-badge">
+                    <div class="cam-live-dot"></div> LIVE
+                </div>
+                <!-- Placeholder when camera is off -->
+                <div class="camera-placeholder" id="cam-placeholder">
+                    <i class="fas fa-camera"></i>
+                    <span>Camera is off.<br>Click <strong>Open Camera</strong> to start live preview,<br>or <strong>Upload Image</strong> to pick a photo.</span>
+                </div>
+            </div>
+
+            <div class="camera-actions">
+                <button class="cam-btn cam-btn-secondary" id="cam-open-btn"><i class="fas fa-video"></i> Open Camera</button>
+                <button class="cam-btn cam-btn-primary" id="cam-capture-btn" disabled><i class="fas fa-circle-dot"></i> Capture</button>
+                <button class="cam-btn cam-btn-secondary" id="cam-flip-btn" disabled title="Switch Camera"><i class="fas fa-camera-rotate"></i> Flip</button>
+                <label class="cam-btn cam-btn-secondary" style="cursor:pointer;">
+                    <i class="fas fa-image"></i> Upload Image
+                    <input type="file" id="cam-file-input" accept="image/*" style="display:none;">
+                </label>
+                <button class="cam-btn cam-btn-success" id="cam-analyze-btn" disabled><i class="fas fa-microscope"></i> Analyze Skin</button>
+                <button class="cam-btn cam-btn-danger" id="cam-retake-btn" style="display:none;"><i class="fas fa-rotate-left"></i> Retake</button>
+            </div>
+
+            <div class="camera-tip">
+                <strong>Tip:</strong> Position the affected skin area clearly in the frame, ensure good lighting, and hold the camera steady for best results. This analysis is <strong>educational only</strong> and does not constitute medical advice.
+            </div>
+        </div>
+    </div>
+
     <!-- Rename Chat Modal -->
     <div class="modal" id="rename-modal">
         <div class="modal-content">
@@ -2706,6 +2962,276 @@
 
     // Initialize the app
     window.addEventListener('DOMContentLoaded', init);
+
+    // ===== SKIN ANALYSIS CAMERA MODULE =====
+    (function() {
+        let stream = null;
+        let capturedBlob = null;
+        let isCameraOn = false;
+        let captureMode = false; // true when a snapshot is shown
+        let facingMode = 'user'; // default: front camera
+
+        const modal       = document.getElementById('camera-modal');
+        const closeBtn    = document.getElementById('camera-modal-close');
+        const skinBtn     = document.getElementById('skin-camera-btn');
+        const video       = document.getElementById('camera-video');
+        const canvas      = document.getElementById('camera-canvas');
+        const placeholder = document.getElementById('cam-placeholder');
+        const liveBadge   = document.getElementById('cam-live-badge');
+        const scanLine    = document.getElementById('cam-scan-line');
+        const openBtn     = document.getElementById('cam-open-btn');
+        const captureBtn  = document.getElementById('cam-capture-btn');
+        const flipBtn     = document.getElementById('cam-flip-btn');
+        const fileInput   = document.getElementById('cam-file-input');
+        const analyzeBtn  = document.getElementById('cam-analyze-btn');
+        const retakeBtn   = document.getElementById('cam-retake-btn');
+
+        // Open modal
+        skinBtn.addEventListener('click', () => modal.classList.add('open'));
+
+        // Close modal
+        closeBtn.addEventListener('click', closeCamera);
+        modal.addEventListener('click', e => { if (e.target === modal) closeCamera(); });
+
+        function closeCamera() {
+            stopStream();
+            resetUI();
+            modal.classList.remove('open');
+        }
+
+        function stopStream() {
+            if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+            isCameraOn = false;
+        }
+
+        function resetUI() {
+            stopStream();
+            capturedBlob = null;
+            captureMode = false;
+            video.style.display = 'none';
+            video.style.transform = '';
+            canvas.style.display = 'none';
+            placeholder.style.display = 'flex';
+            liveBadge.classList.remove('live');
+            scanLine.style.display = 'none';
+            openBtn.innerHTML = '<i class="fas fa-video"></i> Open Camera';
+            openBtn.disabled = false;
+            captureBtn.disabled = true;
+            flipBtn.disabled = true;
+            analyzeBtn.disabled = true;
+            retakeBtn.style.display = 'none';
+        }
+
+        // Start camera with given facingMode
+        async function startCamera() {
+            stopStream();
+            openBtn.disabled = true;
+            openBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Starting...';
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode, width: { ideal: 1280 }, height: { ideal: 960 } },
+                    audio: false
+                });
+                video.srcObject = stream;
+                // Mirror the video for front camera so preview looks natural
+                video.style.transform = facingMode === 'user' ? 'scaleX(-1)' : 'scaleX(1)';
+                video.style.display = 'block';
+                canvas.style.display = 'none';
+                placeholder.style.display = 'none';
+                liveBadge.classList.add('live');
+                scanLine.style.display = 'block';
+                captureBtn.disabled = false;
+                flipBtn.disabled = false;
+                isCameraOn = true;
+                openBtn.innerHTML = '<i class="fas fa-video"></i> Camera On';
+                openBtn.disabled = false;
+            } catch (err) {
+                console.error('Camera error:', err);
+                openBtn.innerHTML = '<i class="fas fa-video-slash"></i> Camera denied';
+                openBtn.disabled = false;
+                flipBtn.disabled = true;
+            }
+        }
+
+        // Open camera
+        openBtn.addEventListener('click', () => { if (!captureMode) startCamera(); });
+
+        // Flip camera
+        flipBtn.addEventListener('click', () => {
+            facingMode = facingMode === 'user' ? 'environment' : 'user';
+            flipBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            startCamera();
+        });
+
+        // Capture snapshot — un-mirror if front camera so saved image is correct
+        captureBtn.addEventListener('click', () => {
+            if (!isCameraOn) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width  = video.videoWidth  || 640;
+            canvas.height = video.videoHeight || 480;
+            if (facingMode === 'user') {
+                // Draw mirrored on canvas to undo the CSS scaleX(-1) visual flip
+                ctx.translate(canvas.width, 0);
+                ctx.scale(-1, 1);
+            }
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            canvas.toBlob(blob => {
+                capturedBlob = blob;
+                captureMode = true;
+                video.style.display = 'none';
+                canvas.style.display = 'block';
+                liveBadge.classList.remove('live');
+                scanLine.style.display = 'none';
+                stopStream();
+                captureBtn.disabled = true;
+                analyzeBtn.disabled = false;
+                retakeBtn.style.display = 'flex';
+            }, 'image/jpeg', 0.92);
+        });
+
+        // Retake
+        retakeBtn.addEventListener('click', () => {
+            capturedBlob = null;
+            captureMode = false;
+            canvas.style.display = 'none';
+            retakeBtn.style.display = 'none';
+            analyzeBtn.disabled = true;
+            // Restart camera
+            openBtn.click();
+        });
+
+        // Upload from file
+        fileInput.addEventListener('change', e => {
+            const file = e.target.files[0];
+            if (!file) return;
+            if (!file.type.startsWith('image/')) {
+                alert('Please select an image file.');
+                return;
+            }
+            capturedBlob = file;
+            const url = URL.createObjectURL(file);
+            const img = new Image();
+            img.onload = () => {
+                stopStream();
+                captureMode = true;
+                const ctx = canvas.getContext('2d');
+                canvas.width  = img.naturalWidth;
+                canvas.height = img.naturalHeight;
+                ctx.drawImage(img, 0, 0);
+                video.style.display = 'none';
+                canvas.style.display = 'block';
+                placeholder.style.display = 'none';
+                liveBadge.classList.remove('live');
+                scanLine.style.display = 'none';
+                captureBtn.disabled = true;
+                analyzeBtn.disabled = false;
+                retakeBtn.style.display = 'flex';
+                URL.revokeObjectURL(url);
+            };
+            img.src = url;
+            fileInput.value = '';
+        });
+
+        // Analyze skin
+        analyzeBtn.addEventListener('click', async () => {
+            if (!capturedBlob) return;
+
+            // Save blob reference BEFORE closeCamera() nulls capturedBlob via resetUI()
+            const blobToAnalyze = capturedBlob;
+            const mimeTypeToSend = capturedBlob.type || 'image/jpeg';
+
+            closeCamera();
+
+            // Borrow chat state from the outer module
+            const chatMessagesEl = document.getElementById('chat-messages');
+
+            // Show user message with thumbnail using the saved blob
+            const objUrl = URL.createObjectURL(blobToAnalyze);
+            const userMsgDiv = document.createElement('div');
+            userMsgDiv.className = 'message user-message';
+            userMsgDiv.style.cssText = 'display:flex;flex-direction:column;gap:0.5rem;';
+            const labelSpan = document.createElement('span');
+            labelSpan.style.cssText = 'font-size:0.85rem;opacity:0.8;';
+            labelSpan.textContent = '📷 Skin Analysis Request';
+            const imgEl = document.createElement('img');
+            imgEl.style.cssText = 'max-width:200px;border-radius:0.5rem;object-fit:cover;';
+            imgEl.src = objUrl;
+            imgEl.addEventListener('load', () => URL.revokeObjectURL(objUrl), { once: true });
+            userMsgDiv.appendChild(labelSpan);
+            userMsgDiv.appendChild(imgEl);
+            chatMessagesEl.appendChild(userMsgDiv);
+            chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+
+            // Show typing indicator
+            const typingEl = document.createElement('div');
+            typingEl.className = 'typing-indicator';
+            typingEl.id = 'skin-typing';
+            typingEl.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div><span style="font-size:0.8rem;color:var(--text-secondary);">Analyzing skin...</span>';
+            chatMessagesEl.appendChild(typingEl);
+            chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+
+            try {
+                // Convert blob to base64
+                const base64 = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        const result = reader.result;
+                        resolve(result.split(',')[1]);
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blobToAnalyze);
+                });
+
+                const response = await fetch(`${FLASK_API_BASE_URL}/analyze-skin`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        imageData: base64,
+                        mimeType: mimeTypeToSend,
+                        profile: typeof userProfile !== 'undefined' ? userProfile : {}
+                    })
+                });
+
+                const result = await response.json();
+                typingEl.remove();
+
+                if (response.ok && result.response) {
+                    // Render bot message using the outer addMessage function
+                    if (typeof addMessage === 'function') {
+                        addMessage('bot', result.response);
+                        if (typeof chats !== 'undefined' && typeof currentChatId !== 'undefined' && typeof saveChats === 'function') {
+                            chats[currentChatId].messages.push({ role: 'bot', content: result.response });
+                            saveChats();
+                        }
+                    } else {
+                        const div = document.createElement('div');
+                        div.className = 'message bot-message';
+                        div.textContent = result.response;
+                        chatMessagesEl.appendChild(div);
+                        chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+                    }
+                } else {
+                    const errDiv = document.createElement('div');
+                    errDiv.className = 'message bot-message';
+                    errDiv.textContent = `⚠️ Skin analysis error: ${result.error || 'Unknown error'}. Please try again.`;
+                    chatMessagesEl.appendChild(errDiv);
+                    chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+                }
+            } catch (err) {
+                console.error('Skin analysis error:', err);
+                typingEl.remove();
+                const errDiv = document.createElement('div');
+                errDiv.className = 'message bot-message';
+                errDiv.textContent = '⚠️ Network error during skin analysis. Please check your connection.';
+                chatMessagesEl.appendChild(errDiv);
+                chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+            }
+
+            capturedBlob = null;
+        });
+
+    })();
 </script>
 
 </body>
